@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import Buttons from './Buttons';
-import Navigation from './Navigation';
-import { MdArrowDropDown } from 'react-icons/md';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import Buttons from "./Buttons";
+import Navigation from "./Navigation";
+import { MdArrowDropDown } from "react-icons/md";
+import { motion } from "framer-motion";
 
 function InputField() {
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
   const [taskArray, setTaskArray] = useState([]);
   const [allTasks, setAllTasks] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -15,36 +15,36 @@ function InputField() {
   const [complete, setComplete] = useState(false);
 
   const Categories = [
-    { name: 'All', color: 'bg-emerald-600' },
-    { name: 'Normal', color: 'bg-orange-600' },
-    { name: 'Must', color: 'bg-pink-600' },
-    { name: 'Daily', color: 'bg-purple-600' },
+    { name: "All", color: "bg-emerald-600" },
+    { name: "Normal", color: "bg-orange-600" },
+    { name: "Must", color: "bg-pink-600" },
+    { name: "Daily", color: "bg-purple-600" },
   ];
 
   const TaskColor = [
-    { start: 'from-emerald-200', end: 'to-emerald-400' },
-    { start: 'from-pink-200', end: 'to-pink-400' },
-    { start: 'from-sky-200', end: 'to-sky-400' },
-    { start: 'from-orange-200', end: 'to-orange-400' },
+    { start: "from-emerald-200", end: "to-emerald-400" },
+    { start: "from-pink-200", end: "to-pink-400" },
+    { start: "from-sky-200", end: "to-sky-400" },
+    { start: "from-orange-200", end: "to-orange-400" },
   ];
 
   const TaskColor1 = [
-    { start: 'from-emerald-100', end: 'to-emerald-200' },
-    { start: 'from-pink-100', end: 'to-pink-200' },
-    { start: 'from-sky-100', end: 'to-sky-200' },
-    { start: 'from-orange-100', end: 'to-orange-200' },
+    { start: "from-emerald-100", end: "to-emerald-200" },
+    { start: "from-pink-100", end: "to-pink-200" },
+    { start: "from-sky-100", end: "to-sky-200" },
+    { start: "from-orange-100", end: "to-orange-200" },
   ];
 
   // Load tasks from localStorage
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
     setAllTasks(storedTasks);
     setTaskArray(storedTasks);
   }, []);
 
   // Save tasks to localStorage whenever tasks change
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(allTasks));
+    localStorage.setItem("tasks", JSON.stringify(allTasks));
   }, [allTasks]);
 
   // Handle create or edit
@@ -67,9 +67,9 @@ function InputField() {
       setTaskArray(updated);
     }
 
-    setTitle('');
-    setCategory('');
-    setDescription('');
+    setTitle("");
+    setCategory("");
+    setDescription("");
   };
 
   // Delete a task
@@ -81,7 +81,7 @@ function InputField() {
 
   // Filter tasks by category
   const FilterTask = (categoryName) => {
-    if (categoryName === 'All') {
+    if (categoryName === "All") {
       setTaskArray(allTasks);
     } else {
       const filtered = allTasks.filter((task) => task.category === categoryName);
@@ -99,7 +99,7 @@ function InputField() {
           transition={{ duration: 0.7 }}
           className="text-xl text-pink-700 font-semibold"
         >
-          {isEditing ? 'Edit Task' : 'Create your Task here...'}
+          {isEditing ? "Edit Task" : "Create your Task here..."}
         </motion.p>
 
         {/* Title Input */}
@@ -154,25 +154,31 @@ function InputField() {
 
         {/* Add/Update Button */}
         <motion.button
+          type="submit"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-white font-bold h-14 bg-red-600 rounded-lg shadow-lg cursor-pointer active:scale-95 transition-all duration-300"
+          transition={{ duration: 0.5 }}
+          whileTap={{ scale: 0.97 }}
+          className="text-white font-bold h-14 bg-red-600 rounded-lg shadow-lg cursor-pointer"
         >
-          {!isEditing ? 'Add Task' : 'Update Task'}
+          {!isEditing ? "Add Task" : "Update Task"}
         </motion.button>
       </form>
 
       {/* Filter Buttons */}
       <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-7">
-        {Categories.map((cat) => (
-          <button
+        {Categories.map((cat, i) => (
+          <motion.button
             key={cat.name}
-            className={`text-white font-bold h-14 ${cat.color} rounded-lg shadow-lg cursor-pointer active:scale-95 transition-all duration-300`}
+            initial={{ opacity: 0, y: 35 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5}}
+            whileTap={{ scale: 0.95 }}
+            className={`text-white font-bold h-14 ${cat.color} rounded-lg shadow-lg cursor-pointer`}
             onClick={() => FilterTask(cat.name)}
           >
             {cat.name}
-          </button>
+          </motion.button>
         ))}
       </div>
 
@@ -185,11 +191,10 @@ function InputField() {
           taskArray.map((task, index) => (
             <div
               key={task.id}
-              className={`${
-                complete
+              className={`${complete
                   ? `bg-gradient-to-r ${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
                   : `bg-gradient-to-r ${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
-              } flex flex-col gap-2 rounded-2xl shadow-2xl shadow-slate-400 p-6`}
+                } flex flex-col gap-2 rounded-2xl shadow-2xl shadow-slate-400 p-6`}
             >
               <div className="flex justify-between">
                 <div className="flex flex-col gap-3">
@@ -198,11 +203,10 @@ function InputField() {
                       {index + 1}
                     </p>
                     <p
-                      className={`${
-                        complete
-                          ? 'line-through text-2xl font-bold text-slate-900'
-                          : 'text-2xl font-bold text-slate-900'
-                      }`}
+                      className={`${complete
+                          ? "line-through text-2xl font-bold text-slate-900"
+                          : "text-2xl font-bold text-slate-900"
+                        }`}
                     >
                       {task.title}
                     </p>
@@ -215,7 +219,7 @@ function InputField() {
                 <div className="flex flex-col gap-1.5">
                   <Buttons
                     onClick={() => setComplete((prev) => !prev)}
-                    name={!complete ? 'Complete' : 'Undo'}
+                    name={!complete ? "Complete" : "Undo"}
                     color="bg-gradient-to-br from-green-400 to-green-600"
                   />
                   <Buttons

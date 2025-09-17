@@ -7,7 +7,7 @@ function Home() {
   return (
     <motion.div
       initial={{ opacity: 0, y: -50 }}
-      animate={{ opacity: 1 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7}}
     >
       <h1 className='text-center text-3xl font-bold text-slate-900'>Task Manager</h1>
