@@ -194,7 +194,7 @@ function InputField() {
               className={`${complete
                   ? `bg-gradient-to-r ${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
                   : `bg-gradient-to-r ${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
-                } flex flex-col gap-2 rounded-2xl shadow-2xl shadow-slate-400 p-6`}
+                } flex flex-col gap-2 rounded-xl shadow-2xl shadow-slate-400 p-6`}
             >
               <div className="flex justify-between">
                 <div className="flex flex-col gap-3">
