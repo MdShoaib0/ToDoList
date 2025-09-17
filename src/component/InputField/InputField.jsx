@@ -12,6 +12,9 @@ function InputField() {
   const [allTasks, setAllTasks] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [complete, setComplete] = useState(false);
+
+  console.log(complete)
 
   const Categories = [
     { name: "All", color: "bg-emerald-600"},
@@ -21,10 +24,17 @@ function InputField() {
   ];
 
   const TaskColor = [
-    { start: "from-emerald-100", end: "to-emerald-300" },
+    { start: "from-emerald-200", end: "to-emerald-400" },
     { start: "from-pink-200", end: "to-pink-400" },
     { start: "from-sky-200", end: "to-sky-400" },
-    { start: "from-orange-300", end: "to-orange-600" },
+    { start: "from-orange-200", end: "to-orange-400" },
+  ];
+
+  const TaskColor1 = [
+    { start: "from-emerald-100", end: "to-emerald-200" },
+    { start: "from-pink-100", end: "to-pink-200" },
+    { start: "from-sky-100", end: "to-sky-200" },
+    { start: "from-orange-100", end: "to-orange-200" },
   ];
 
   // Load tasks from localStorage
@@ -147,7 +157,7 @@ function InputField() {
         {taskArray.length > 0 ? taskArray.map((task, index) => (
           <div
             key={task.id}
-            className={`flex flex-col gap-2 bg-gradient-to-b ${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end} rounded-2xl shadow-2xl shadow-slate-400 p-6`}
+            className={`${complete ? `bg-gradient-to-r ${TaskColor1[index % TaskColor1.length].start}` : `bg-gradient-to-r ${TaskColor[index % TaskColor.length].start}`} flex flex-col gap-2 ${TaskColor[index % TaskColor.length].end} rounded-2xl shadow-2xl shadow-slate-400 p-6`}
           >
             <div className='flex justify-between'>
               <div className='flex flex-col gap-3'>
@@ -155,15 +165,21 @@ function InputField() {
                   <p className='w-9 h-9 cursor-pointer active:scale-97 transition-all duration-200 flex justify-center items-center text-2xl font-bold rounded-full shadow shadow-black bg-gradient-to-br from-blue-300 to-blue-600 text-white'>
                     {index + 1}
                   </p>
-                  <p className='text-2xl font-bold text-slate-900'>{task.title}</p>
+                  <p className={`${complete ? 'line-through text-2xl font-bold text-slate-900' : `text-2xl font-bold text-slate-900`}`}>{task.title}</p>
                 </div>
-                <p className='w-fit text-sm font-bold bg-gradient-to-br from-pink-400 to-pink-600 px-3.5 py-1 rounded-full text-white border-none outline-none shadow shadow-black cursor-pointer active:scale-95 transition-all duration-200'>
+                <p className='w-fit text-sm font-bold bg-gradient-to-br from-pink-400 to-pink-600 px-3.5 py-1 rounded-full text-white border-none outline-none shadow shadow-gray-600 cursor-pointer active:scale-95 transition-all duration-200'>
                   {task.category}
                 </p>
               </div>
 
               <div className='flex flex-col gap-1.5'>
-                <Buttons name="Complete" color="bg-gradient-to-br from-green-400 to-green-600"/>
+                <Buttons
+                onClick={()=>{
+                  setComplete(prev => !prev);
+                }}
+                name={!complete ? "Complete" : "Undo"}
+                color="bg-gradient-to-br from-green-400 to-green-600"
+                />
                 <Buttons
                   name="Edit"
                   color="bg-gradient-to-br from-yellow-400 to-yellow-600"
