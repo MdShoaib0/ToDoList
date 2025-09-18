@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import Buttons from "./Buttons";
 import Navigation from "./Navigation";
 import { MdArrowDropDown } from "react-icons/md";
-import { motion } from "framer-motion";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 function InputField() {
   const [title, setTitle] = useState("");
@@ -89,24 +90,37 @@ function InputField() {
     }
   };
 
+  useGSAP( ()=> {
+    gsap.from('#title', {
+      y: 50,
+      opacity: 0,
+      duration: 0.5,
+      stagger: 0.2,
+      ease: "sine"
+    })
+
+    gsap.from('#mainTitle', {
+      x: 150,
+      opacity: 0,
+      duration: 1.5,
+      ease: "bounce"
+    })
+  })
+
   return (
     <div className="flex flex-col gap-16 py-12">
       {/* Task Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full md:w-xl">
-        <motion.p
-          initial={{ opacity: 0, x: 200 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7 }}
+        <p
+          id="mainTitle"
           className="text-xl text-pink-700 font-semibold"
         >
           {isEditing ? "Edit Task" : "Create your Task here..."}
-        </motion.p>
+        </p>
 
         {/* Title Input */}
-        <motion.input
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
+        <input
+          id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           type="text"
@@ -115,10 +129,8 @@ function InputField() {
         />
 
         {/* Category Selector */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
+        <div
+          id="title"
           className="relative w-full bg-white rounded-lg shadow"
         >
           <select
@@ -139,13 +151,11 @@ function InputField() {
             size={27}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none"
           />
-        </motion.div>
+        </div>
 
         {/* Description Textarea */}
-        <motion.textarea
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
+        <textarea
+          id="title"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Task Description"
@@ -153,32 +163,29 @@ function InputField() {
         />
 
         {/* Add/Update Button */}
-        <motion.button
+        <button
+          id="title"
           type="submit"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          whileTap={{ scale: 0.97 }}
           className="text-white font-bold h-14 bg-red-600 rounded-lg shadow-lg cursor-pointer"
         >
           {!isEditing ? "Add Task" : "Update Task"}
-        </motion.button>
+        </button>
       </form>
 
       {/* Filter Buttons */}
       <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-7">
         {Categories.map((cat, i) => (
-          <motion.button
+          <button
             key={cat.name}
             initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5}}
+            transition={{ duration: 0.5 }}
             whileTap={{ scale: 0.95 }}
             className={`text-white font-bold h-14 ${cat.color} rounded-lg shadow-lg cursor-pointer`}
             onClick={() => FilterTask(cat.name)}
           >
             {cat.name}
-          </motion.button>
+          </button>
         ))}
       </div>
 
@@ -192,8 +199,8 @@ function InputField() {
             <div
               key={task.id}
               className={`${complete
-                  ? `bg-gradient-to-r ${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
-                  : `bg-gradient-to-r ${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
+                ? `bg-gradient-to-r ${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
+                : `bg-gradient-to-r ${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
                 } flex flex-col gap-2 rounded-xl shadow-2xl shadow-slate-400 p-6`}
             >
               <div className="flex justify-between">
@@ -204,8 +211,8 @@ function InputField() {
                     </p>
                     <p
                       className={`${complete
-                          ? "line-through text-2xl font-bold text-slate-900"
-                          : "text-2xl font-bold text-slate-900"
+                        ? "line-through text-2xl font-bold text-slate-900"
+                        : "text-2xl font-bold text-slate-900"
                         }`}
                     >
                       {task.title}

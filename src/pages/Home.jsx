@@ -1,19 +1,26 @@
 import React from 'react'
 import InputField from '../component/InputField'
 import Footer from './Footer'
-import { motion } from 'framer-motion'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 
 function Home() {
+
+  useGSAP( () => {
+    gsap.from('#heading', {
+      y: -35,
+      opacity: 0,
+      duration: 1.2,
+      ease: "bounce"
+    })
+  })
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7}}
+    <div
     >
-      <h1 className='text-center text-3xl font-bold text-slate-900'>Task Manager</h1>
+      <h1 id='heading' className='text-center text-3xl font-bold text-slate-900'>Task Manager</h1>
       <InputField />
       <Footer />
-    </motion.div>
+    </div>
   )
 }
 
