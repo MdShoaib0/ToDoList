@@ -13,7 +13,6 @@ function InputField() {
   const [allTasks, setAllTasks] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [complete, setComplete] = useState(false);
 
   const Categories = [
     { name: "All", color: "bg-emerald-600" },
@@ -38,31 +37,44 @@ function InputField() {
 
   // Load tasks from localStorage
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    setAllTasks(storedTasks);
-    setTaskArray(storedTasks);
+    try {
+      const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      setAllTasks(storedTasks);
+      setTaskArray(storedTasks);
+    } catch {
+      setAllTasks([]);
+      setTaskArray([]);
+    }
   }, []);
 
-  // Save tasks to localStorage whenever tasks change
+  // Save tasks whenever they change
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(allTasks));
   }, [allTasks]);
 
-  // Handle create or edit
+  // Create or edit a task
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim() || !category.trim() || !description.trim()) return;
 
     if (isEditing && editId !== null) {
-      const updatedTasks = allTasks.map((task) =>
-        task.id === editId ? { ...task, title, category, description } : task
+      const updated = allTasks.map((task) =>
+        task.id === editId
+          ? { ...task, title, category, description }
+          : task
       );
-      setAllTasks(updatedTasks);
-      setTaskArray(updatedTasks);
+      setAllTasks(updated);
+      setTaskArray(updated);
       setIsEditing(false);
       setEditId(null);
     } else {
-      const newTask = { id: Date.now(), title, category, description };
+      const newTask = {
+        id: Date.now(),
+        title,
+        category,
+        description,
+        completed: false,
+      };
       const updated = [...allTasks, newTask];
       setAllTasks(updated);
       setTaskArray(updated);
@@ -73,52 +85,70 @@ function InputField() {
     setDescription("");
   };
 
-  // Delete a task
   const handleDeleteTask = (id) => {
     const filtered = allTasks.filter((task) => task.id !== id);
     setAllTasks(filtered);
     setTaskArray(filtered);
   };
 
-  // Filter tasks by category
+  const toggleComplete = (id) => {
+    const updated = allTasks.map((task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    );
+    setAllTasks(updated);
+    setTaskArray(updated);
+  };
+
   const FilterTask = (categoryName) => {
     if (categoryName === "All") {
       setTaskArray(allTasks);
     } else {
-      const filtered = allTasks.filter((task) => task.category === categoryName);
-      setTaskArray(filtered);
+      setTaskArray(allTasks.filter((t) => t.category === categoryName));
     }
   };
 
-  useGSAP( ()=> {
-    gsap.from('#title', {
-      y: 50,
+  // GSAP Animations
+  useGSAP(() => {
+    const tl = gsap.timeline();
+    tl.from("#mainTitle", {
+      x: 100,
       opacity: 0,
-      duration: 0.5,
-      stagger: 0.2,
-      ease: "sine"
+      duration: 1,
+      ease: "power3.out",
     })
-
-    gsap.from('#mainTitle', {
-      x: 150,
-      opacity: 0,
-      duration: 1.5,
-      ease: "bounce"
-    })
-  })
+      .from("#title", {
+        y: 25,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.1,
+        ease: "power3.out",
+      }, "-=0.7")
+      .from("#All, #Must", {
+        x: -25,
+        y: -10,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.2,
+        ease: "power3.out",
+      }, "Category, -=0.9")
+      .from("#Normal, #Daily", {
+        x: 25,
+        y: -10,
+        opacity: 0,
+        duration: 0.7,
+        stagger: 0.2,
+        ease: "power3.out",
+      }, "Category, -=0.9");
+  }, []);
 
   return (
     <div className="flex flex-col gap-16 py-12">
       {/* Task Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full md:w-xl">
-        <p
-          id="mainTitle"
-          className="text-xl text-pink-700 font-semibold"
-        >
+        <p id="mainTitle" className="text-xl text-pink-700 font-semibold">
           {isEditing ? "Edit Task" : "Create your Task here..."}
         </p>
 
-        {/* Title Input */}
         <input
           id="title"
           value={title}
@@ -128,11 +158,7 @@ function InputField() {
           className="bg-white outline-none px-4 h-14 rounded-lg shadow"
         />
 
-        {/* Category Selector */}
-        <div
-          id="title"
-          className="relative w-full bg-white rounded-lg shadow"
-        >
+        <div id="title" className="relative w-full bg-white rounded-lg shadow">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
@@ -153,7 +179,6 @@ function InputField() {
           />
         </div>
 
-        {/* Description Textarea */}
         <textarea
           id="title"
           value={description}
@@ -162,7 +187,6 @@ function InputField() {
           className="bg-white outline-none p-4 h-32 rounded-xl shadow mb-4"
         />
 
-        {/* Add/Update Button */}
         <button
           id="title"
           type="submit"
@@ -174,13 +198,10 @@ function InputField() {
 
       {/* Filter Buttons */}
       <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-7">
-        {Categories.map((cat, i) => (
+        {Categories.map((cat) => (
           <button
             key={cat.name}
-            initial={{ opacity: 0, y: 35 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            whileTap={{ scale: 0.95 }}
+            id={cat.name}
             className={`text-white font-bold h-14 ${cat.color} rounded-lg shadow-lg cursor-pointer`}
             onClick={() => FilterTask(cat.name)}
           >
@@ -189,7 +210,6 @@ function InputField() {
         ))}
       </div>
 
-      {/* Navigation */}
       <Navigation />
 
       {/* Task List */}
@@ -198,9 +218,9 @@ function InputField() {
           taskArray.map((task, index) => (
             <div
               key={task.id}
-              className={`${complete
-                ? `bg-gradient-to-r ${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
-                : `bg-gradient-to-r ${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
+              className={`bg-gradient-to-r ${task.completed
+                  ? `${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
+                  : `${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
                 } flex flex-col gap-2 rounded-xl shadow-2xl shadow-slate-400 p-6`}
             >
               <div className="flex justify-between">
@@ -210,9 +230,7 @@ function InputField() {
                       {index + 1}
                     </p>
                     <p
-                      className={`${complete
-                        ? "line-through text-2xl font-bold text-slate-900"
-                        : "text-2xl font-bold text-slate-900"
+                      className={`text-2xl font-bold text-slate-900 ${task.completed ? "line-through" : ""
                         }`}
                     >
                       {task.title}
@@ -225,8 +243,8 @@ function InputField() {
 
                 <div className="flex flex-col gap-1.5">
                   <Buttons
-                    onClick={() => setComplete((prev) => !prev)}
-                    name={!complete ? "Complete" : "Undo"}
+                    onClick={() => toggleComplete(task.id)}
+                    name={!task.completed ? "Complete" : "Undo"}
                     color="bg-gradient-to-br from-green-400 to-green-600"
                   />
                   <Buttons
@@ -251,7 +269,9 @@ function InputField() {
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-700 col-span-full">No tasks available</p>
+          <p className="text-center text-gray-700 col-span-full">
+            No tasks available
+          </p>
         )}
       </div>
     </div>

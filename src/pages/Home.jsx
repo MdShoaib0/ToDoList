@@ -8,10 +8,10 @@ function Home() {
 
   useGSAP( () => {
     gsap.from('#heading', {
-      y: -35,
+      y: -25,
       opacity: 0,
-      duration: 1.2,
-      ease: "bounce"
+      duration: 1,
+      ease: 'power3'
     })
   })
   return (
