@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Buttons from "./Buttons";
-import Navigation from "./Navigation";
 import { MdArrowDropDown } from "react-icons/md";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { Link } from "react-router";
 
 function InputField() {
   const [title, setTitle] = useState("");
@@ -35,33 +35,32 @@ function InputField() {
     { start: "from-orange-100", end: "to-orange-200" },
   ];
 
-  // Load tasks from localStorage
+  // ✅ Load tasks safely from localStorage
   useEffect(() => {
     try {
       const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
       setAllTasks(storedTasks);
       setTaskArray(storedTasks);
-    } catch {
+    } catch (err) {
+      console.error("Failed to parse tasks:", err);
       setAllTasks([]);
       setTaskArray([]);
     }
   }, []);
 
-  // Save tasks whenever they change
+  // ✅ Save tasks whenever they change
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(allTasks));
   }, [allTasks]);
 
-  // Create or edit a task
+  // ✅ Add or edit a task
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title.trim() || !category.trim() || !description.trim()) return;
 
     if (isEditing && editId !== null) {
       const updated = allTasks.map((task) =>
-        task.id === editId
-          ? { ...task, title, category, description }
-          : task
+        task.id === editId ? { ...task, title, category, description } : task
       );
       setAllTasks(updated);
       setTaskArray(updated);
@@ -100,69 +99,104 @@ function InputField() {
   };
 
   const FilterTask = (categoryName) => {
-    if (categoryName === "All") {
-      setTaskArray(allTasks);
-    } else {
-      setTaskArray(allTasks.filter((t) => t.category === categoryName));
-    }
+    if (categoryName === "All") setTaskArray(allTasks);
+    else setTaskArray(allTasks.filter((t) => t.category === categoryName));
   };
 
-  // GSAP Animations
+  // ✅ GSAP Animations
   useGSAP(() => {
     const tl = gsap.timeline();
+
     tl.from("#mainTitle", {
       x: 100,
       opacity: 0,
       duration: 1,
       ease: "power3.out",
     })
-      .from("#title", {
-        y: 25,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.1,
-        ease: "power3.out",
-      }, "-=0.7")
-      .from("#All, #Must", {
-        x: -25,
-        y: -10,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.2,
-        ease: "power3.out",
-      }, "Category, -=0.9")
-      .from("#Normal, #Daily", {
-        x: 25,
-        y: -10,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.2,
-        ease: "power3.out",
-      }, "Category, -=0.9");
+      .from(
+        "#input",
+        {
+          y: 25,
+          opacity: 0,
+          duration: 1,
+          stagger: 0.1,
+          ease: "power3.out",
+        },
+        "-=0.7"
+      )
+      .from(
+        "#All, #Must",
+        {
+          x: -25,
+          y: -10,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.2,
+          ease: "power3.out",
+        },
+        "Category, -=0.9"
+      )
+      .from(
+        "#Normal, #Daily",
+        {
+          x: 25,
+          y: -10,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.2,
+          ease: "power3.out",
+        },
+        "Category, -=0.9"
+      )
+      .from(
+        "#Namaz",
+        {
+          x: -25,
+          opacity: 0,
+          duration: 0.7,
+          ease: "sine",
+        },
+        "Navigation, -=0.7"
+      )
+      .from(
+        "#OurStory",
+        {
+          x: 25,
+          opacity: 0,
+          duration: 0.7,
+          ease: "sine",
+        },
+        "Navigation, -=0.7"
+      );
+
+    return () => tl.kill();
   }, []);
 
   return (
     <div className="flex flex-col gap-16 py-12">
       {/* Task Form */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full md:w-xl">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-6 w-full md:w-xl"
+      >
         <p id="mainTitle" className="text-xl text-pink-700 font-semibold">
           {isEditing ? "Edit Task" : "Create your Task here..."}
         </p>
 
         <input
-          id="title"
+          id="input"
+          className="task-title bg-white outline-none px-4 h-14 rounded-lg shadow"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           type="text"
           placeholder="Task Title"
-          className="bg-white outline-none px-4 h-14 rounded-lg shadow"
         />
 
-        <div id="title" className="relative w-full bg-white rounded-lg shadow">
+        <div id="input" className="relative w-full bg-white rounded-lg shadow">
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full h-14 px-4 pr-10 outline-none appearance-none bg-transparent"
+            className="task-title w-full h-14 px-4 pr-10 outline-none appearance-none bg-transparent"
           >
             <option value="" disabled>
               Categories
@@ -173,6 +207,7 @@ function InputField() {
               </option>
             ))}
           </select>
+
           <MdArrowDropDown
             size={27}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none"
@@ -180,17 +215,17 @@ function InputField() {
         </div>
 
         <textarea
-          id="title"
+          id="input"
+          className="task-title bg-white outline-none p-4 h-32 rounded-xl shadow mb-4"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Task Description"
-          className="bg-white outline-none p-4 h-32 rounded-xl shadow mb-4"
         />
 
         <button
-          id="title"
+          id="input"
+          className="task-title text-white font-bold h-14 bg-red-600 rounded-lg shadow-lg cursor-pointer"
           type="submit"
-          className="text-white font-bold h-14 bg-red-600 rounded-lg shadow-lg cursor-pointer"
         >
           {!isEditing ? "Add Task" : "Update Task"}
         </button>
@@ -210,7 +245,26 @@ function InputField() {
         ))}
       </div>
 
-      <Navigation />
+      {/* Navigation Links */}
+      <div className="grid grid-cols-2 gap-8">
+        <Link
+          id="Namaz"
+          className="text-white text-center font-bold py-4 bg-fuchsia-600 rounded-lg shadow-lg cursor-pointer"
+          to="/namaz"
+        >
+          Namaz
+        </Link>
+
+        <Link
+          id="OurStory"
+          className="text-white text-center font-bold py-4 bg-rose-500 rounded-lg shadow-lg cursor-pointer"
+          to="https://kabooter1.netlify.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Our Story
+        </Link>
+      </div>
 
       {/* Task List */}
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-12">
@@ -226,7 +280,7 @@ function InputField() {
               <div className="flex justify-between">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2">
-                    <p className="w-9 h-9 cursor-pointer active:scale-95 transition-all duration-200 flex justify-center items-center text-2xl font-bold rounded-full shadow shadow-black bg-gradient-to-br from-blue-300 to-blue-600 text-white">
+                    <p className="w-9 h-9 cursor-pointer active:scale-95 transition-all duration-200 flex justify-center items-center text-2xl font-bold rounded-full shadow bg-gradient-to-br from-blue-300 to-blue-600 text-white">
                       {index + 1}
                     </p>
                     <p
@@ -236,7 +290,7 @@ function InputField() {
                       {task.title}
                     </p>
                   </div>
-                  <p className="w-fit text-sm font-bold bg-gradient-to-br from-pink-400 to-pink-600 px-3.5 py-1 rounded-full text-white shadow shadow-gray-600">
+                  <p className="w-fit text-sm font-bold bg-gradient-to-br from-pink-400 to-pink-600 px-3.5 py-1 rounded-full text-white shadow">
                     {task.category}
                   </p>
                 </div>
