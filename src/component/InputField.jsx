@@ -4,6 +4,7 @@ import { MdArrowDropDown } from "react-icons/md";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Link } from "react-router";
+import { motion, scale } from "motion/react";
 
 function InputField() {
   const [title, setTitle] = useState("");
@@ -111,7 +112,8 @@ function InputField() {
       x: 100,
       opacity: 0,
       duration: 1,
-      ease: "power3.out",
+      rotate: 5,
+      ease: "sine.out",
     })
       .from(
         "#input",
@@ -120,53 +122,53 @@ function InputField() {
           opacity: 0,
           duration: 1,
           stagger: 0.1,
-          ease: "power3.out",
+          ease: "sine.out",
         },
-        "-=0.7"
+        "-=85%"
       )
       .from(
         "#All, #Must",
         {
-          x: -25,
+          x: -20,
           y: -10,
           opacity: 0,
           duration: 0.7,
           stagger: 0.2,
-          ease: "power3.out",
+          ease: "sine.out",
         },
-        "Category, -=0.9"
+        "Category, -=85%"
       )
       .from(
         "#Normal, #Daily",
         {
-          x: 25,
+          x: 20,
           y: -10,
           opacity: 0,
           duration: 0.7,
           stagger: 0.2,
-          ease: "power3.out",
+          ease: "sine.out",
         },
-        "Category, -=0.9"
+        "Category, -=85%"
       )
       .from(
         "#Namaz",
         {
-          x: -25,
+          x: -20,
           opacity: 0,
           duration: 0.7,
-          ease: "sine",
+          ease: "sine.out",
         },
-        "Navigation, -=0.7"
+        "Navigation, -=85%"
       )
       .from(
         "#OurStory",
         {
-          x: 25,
+          x: 20,
           opacity: 0,
           duration: 0.7,
-          ease: "sine",
+          ease: "sine.out",
         },
-        "Navigation, -=0.7"
+        "Navigation, -=85%"
       );
 
     return () => tl.kill();
@@ -222,26 +224,32 @@ function InputField() {
           placeholder="Task Description"
         />
 
-        <button
+        <motion.button
+          whileTap={{scale: 0.95}}
+          whileHover={{scale: 1.05}}
+          transition={{duration: 0.3}}
           id="input"
           className="task-title text-white font-bold h-14 bg-red-600 rounded-lg shadow-lg cursor-pointer"
           type="submit"
         >
           {!isEditing ? "Add Task" : "Update Task"}
-        </button>
+        </motion.button>
       </form>
 
       {/* Filter Buttons */}
       <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-7">
         {Categories.map((cat) => (
-          <button
+          <motion.button
+          whileTap={{scale: 0.95}}
+          whileHover={{scale: 1.05}}
+          transition={{duration: 0.3}}
             key={cat.name}
             id={cat.name}
             className={`text-white font-bold h-14 ${cat.color} rounded-lg shadow-lg cursor-pointer`}
             onClick={() => FilterTask(cat.name)}
           >
             {cat.name}
-          </button>
+          </motion.button>
         ))}
       </div>
 

@@ -7,10 +7,10 @@ import gsap from 'gsap';
 function Home() {
   useGSAP(() => {
     const animation = gsap.from('#heading', {
-      y: -25,
+      y: -35,
       opacity: 0,
       duration: 1,
-      ease: 'power3',
+      ease: "sine.out",
     });
 
     // Cleanup on unmount
@@ -25,7 +25,6 @@ function Home() {
       >
         Task Manager
       </h1>
-
       <InputField />
       <Footer />
     </div>
