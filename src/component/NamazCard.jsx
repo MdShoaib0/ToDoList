@@ -86,7 +86,7 @@ function NamazCard({ name }) {
       <div className="grid grid-cols-2 gap-4">
         <div
           onClick={handleQuada}
-          className="bg-blue-700 text-white py-2.5 px-6 rounded-lg flex justify-center items-center gap-2 font-semibold active:scale-95 transition-all duration-300 cursor-pointer"
+          className="bg-blue-500 text-white py-2.5 px-6 rounded-lg flex justify-center items-center gap-2 font-semibold active:scale-95 transition-all duration-300 cursor-pointer"
         >
           <button>Quada</button>
           <p><GrAdd size={17} /></p>
