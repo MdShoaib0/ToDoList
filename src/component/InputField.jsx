@@ -72,6 +72,7 @@ function InputField() {
         id: Date.now(),
         title,
         category,
+        date: new Date().toLocaleString(),
         description,
         completed: false,
       };
@@ -292,7 +293,7 @@ function InputField() {
                       {index + 1}
                     </p>
                     <p
-                      className={`text-2xl font-bold text-slate-900 ${task.completed ? "line-through" : ""
+                      className={`text-2xl font-bold text-emerald-950 ${task.completed ? "line-through" : ""
                         }`}
                     >
                       {task.title}
@@ -301,6 +302,7 @@ function InputField() {
                   <p className="w-fit text-sm font-bold bg-gradient-to-br from-pink-400 to-pink-600 px-3.5 py-1 rounded-full text-white shadow">
                     {task.category}
                   </p>
+                  <p className="text-sm font-medium text-gray-600">{task.date}</p>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
@@ -327,7 +329,7 @@ function InputField() {
                   />
                 </div>
               </div>
-              <p className="text-slate-700">{task.description}</p>
+              <p className="text-slate-700 font-medium">{task.description}</p>
             </div>
           ))
         ) : (
