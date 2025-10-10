@@ -113,7 +113,6 @@ function InputField() {
       x: 100,
       opacity: 0,
       duration: 1,
-      rotate: 5,
       ease: "sine.out",
     })
       .from(
@@ -284,7 +283,7 @@ function InputField() {
               className={`bg-gradient-to-r ${task.completed
                 ? `${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
                 : `${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
-                } flex flex-col gap-2 rounded-xl shadow-xl shadow-slate-400 p-6`}
+                } flex flex-col gap-2 rounded-xl shadow-lg shadow-slate-300 p-6`}
             >
               <div className="flex justify-between">
                 <div className="flex flex-col gap-3">
