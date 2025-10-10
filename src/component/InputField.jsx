@@ -328,7 +328,7 @@ function InputField() {
                   />
                 </div>
               </div>
-              <p className="text-slate-700 font-medium">{task.description}</p>
+              <p className="text-slate-700 font-medium whitespace-pre-line">{task.description}</p>
             </div>
           ))
         ) : (
