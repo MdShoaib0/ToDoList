@@ -226,9 +226,9 @@ function InputField() {
         />
 
         <motion.button
-          whileTap={{scale: 0.95}}
-          whileHover={{scale: 1.05}}
-          transition={{duration: 0.3}}
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3 }}
           id="input"
           className="task-title text-white font-bold h-14 bg-red-600 rounded-lg shadow-lg cursor-pointer"
           type="submit"
@@ -241,9 +241,9 @@ function InputField() {
       <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-7">
         {Categories.map((cat) => (
           <motion.button
-          whileTap={{scale: 0.95}}
-          whileHover={{scale: 1.05}}
-          transition={{duration: 0.3}}
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
             key={cat.name}
             id={cat.name}
             className={`text-white font-bold h-14 ${cat.color} rounded-lg shadow-lg cursor-pointer`}
@@ -282,9 +282,9 @@ function InputField() {
             <div
               key={task.id}
               className={`bg-gradient-to-r ${task.completed
-                  ? `${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
-                  : `${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
-                } flex flex-col gap-2 rounded-xl shadow-2xl shadow-slate-400 p-6`}
+                ? `${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
+                : `${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
+                } flex flex-col gap-2 rounded-xl shadow-xl shadow-slate-400 p-6`}
             >
               <div className="flex justify-between">
                 <div className="flex flex-col gap-3">
