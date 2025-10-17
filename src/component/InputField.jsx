@@ -4,16 +4,17 @@ import { MdArrowDropDown } from "react-icons/md";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Link } from "react-router";
-import { motion, scale } from "motion/react";
+import { motion } from "motion/react";
+
+const URL = "https://to-do-list-backend-rho.vercel.app/task";
 
 function InputField() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [taskArray, setTaskArray] = useState([]);
-  const [allTasks, setAllTasks] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [taskArray, setTaskArray] = useState([]);
 
   const Categories = [
     { name: "All", color: "bg-emerald-600" },
@@ -36,76 +37,78 @@ function InputField() {
     { start: "from-orange-100", end: "to-orange-200" },
   ];
 
-  // ✅ Load tasks safely from localStorage
-  useEffect(() => {
+  const fetchTasks = async () => {
     try {
-      const storedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-      setAllTasks(storedTasks);
-      setTaskArray(storedTasks);
-    } catch (err) {
-      console.error("Failed to parse tasks:", err);
-      setAllTasks([]);
-      setTaskArray([]);
+      const response = await fetch(URL);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // ✅ Check if the data is an array before accessing
+      if (Array.isArray(data)) {
+        data.forEach(task => console.log("Task ID:", task._id));
+      } else if (data && data._id) {
+        console.log("Single Task ID:", data._id);
+      }
+
+      setTaskArray(data); // update state
+    } catch (error) {
+      console.error("❌ Unable to Fetch Task data:", error.message);
     }
-  }, []);
+  };
 
-  // ✅ Save tasks whenever they change
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(allTasks));
-  }, [allTasks]);
 
-  // ✅ Add or edit a task
+  const AddTask = async (newTask) => {
+    try {
+      const response = await fetch(URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newTask),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to add task: ${response.statusText}`);
+      }
+
+      console.log("✅ Task added successfully:", newTask);
+      await fetchTasks();
+    } catch (error) {
+      console.error("❌ Error adding task:", error);
+    }
+  };
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim() || !category.trim() || !description.trim()) return;
-
-    if (isEditing && editId !== null) {
-      const updated = allTasks.map((task) =>
-        task.id === editId ? { ...task, title, category, description } : task
-      );
-      setAllTasks(updated);
-      setTaskArray(updated);
-      setIsEditing(false);
-      setEditId(null);
-    } else {
-      const newTask = {
-        id: Date.now(),
-        title,
-        category,
-        date: new Date().toLocaleString(),
-        description,
-        completed: false,
-      };
-      const updated = [...allTasks, newTask];
-      setAllTasks(updated);
-      setTaskArray(updated);
-    }
-
+    const newTask = {
+      title: title,
+      category: category,
+      date: new Date().toLocaleString(),
+      description: description,
+      completed: false,
+    };
+    console.log("HandleSubmit is running")
+    AddTask(newTask);
     setTitle("");
     setCategory("");
     setDescription("");
   };
 
-  const handleDeleteTask = (id) => {
-    const filtered = allTasks.filter((task) => task.id !== id);
-    setAllTasks(filtered);
-    setTaskArray(filtered);
-  };
-
-  const toggleComplete = (id) => {
-    const updated = allTasks.map((task) =>
-      task.id === id ? { ...task, completed: !task.completed } : task
-    );
-    setAllTasks(updated);
-    setTaskArray(updated);
-  };
-
   const FilterTask = (categoryName) => {
-    if (categoryName === "All") setTaskArray(allTasks);
-    else setTaskArray(allTasks.filter((t) => t.category === categoryName));
+    console.log("Filter by:", categoryName);
   };
 
-  // ✅ GSAP Animations
+  const toggleComplete = (taskId) => {
+    console.log("Toggle complete:", taskId);
+  };
+
+  const handleDeleteTask = (taskId) => {
+    console.log("Delete task:", taskId);
+  };
+
   useGSAP(() => {
     const tl = gsap.timeline();
 
@@ -174,9 +177,12 @@ function InputField() {
     return () => tl.kill();
   }, []);
 
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
   return (
     <div className="flex flex-col gap-16 py-12">
-      {/* Task Form */}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-6 w-full md:w-xl"
@@ -236,7 +242,6 @@ function InputField() {
         </motion.button>
       </form>
 
-      {/* Filter Buttons */}
       <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-7">
         {Categories.map((cat) => (
           <motion.button
@@ -253,7 +258,6 @@ function InputField() {
         ))}
       </div>
 
-      {/* Navigation Links */}
       <div className="grid grid-cols-2 gap-8">
         <Link
           id="Namaz"
@@ -274,12 +278,11 @@ function InputField() {
         </Link>
       </div>
 
-      {/* Task List */}
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-12">
         {taskArray.length > 0 ? (
           taskArray.map((task, index) => (
             <div
-              key={task.id}
+              key={task._id}
               className={`bg-gradient-to-r ${task.completed
                 ? `${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
                 : `${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
@@ -328,7 +331,9 @@ function InputField() {
                   />
                 </div>
               </div>
-              <p className="text-slate-700 font-medium whitespace-pre-line">{task.description}</p>
+              <p className="text-slate-700 font-medium whitespace-pre-line">
+                {task.description}
+              </p>
             </div>
           ))
         ) : (
