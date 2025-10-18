@@ -1,7 +1,7 @@
 import React from 'react';
 
 function Buttons(props) {
-  const { name, color, active, onClick } = props;
+  const { name, color, onClick } = props;
 
   return (
     <div>
@@ -10,7 +10,7 @@ function Buttons(props) {
         className={`w-21 h-8 rounded-lg outline-none border-none shadow shadow-gray-600 text-slate-100 text-sm font-bold cursor-pointer 
           ${color} 
           active:scale-97 
-          transition-all duration-200`}
+          transition-all duration-300`}
       >
         {name}
       </button>
