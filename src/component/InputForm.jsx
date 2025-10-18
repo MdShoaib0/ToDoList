@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { MdArrowDropDown } from "react-icons/md";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { motion } from "motion/react";
 import TaskCard from "./TaskCard";
 import Navigate from "./Navigate";
 import Categorie from "./Categorie";
 
-const URL = "https://to-do-list-backend-rho.vercel.app/task/";
-// const URL = "http://localhost:5000/task/"
+const URL = "http://localhost:5000/task/";
+// const URL = "https://to-do-list-backend-rho.vercel.app/task/";
 
 function InputForm() {
   const [title, setTitle] = useState("");
@@ -22,24 +19,19 @@ function InputForm() {
   const fetchTasks = async () => {
     try {
       const response = await fetch(URL);
-
+      
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const data = await response.json();
-
-      // Ensure we always work with an array
       const tasksArray = Array.isArray(data) ? data : [data];
-
-      console.log("Fetched tasks:", tasksArray);
+      
       setTaskArray(tasksArray);
-
     } catch (error) {
-      console.error("❌ Unable to Fetch Task data:", error.message);
+      console.error("Unable to Fetch Task data:", error.message);
     }
   };
-
 
   const AddTask = async (newTask) => {
     try {
@@ -48,18 +40,20 @@ function InputForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newTask),
       });
+      
       if (!response.ok) {
         throw new Error(`Failed to add task: ${response.statusText}`);
       }
+      
       await fetchTasks();
     } catch (error) {
-      console.error("❌ Error adding task:", error);
+      console.error("Error adding task:", error);
     }
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     const newTask = {
       title: title,
       category: category,
@@ -67,7 +61,9 @@ function InputForm() {
       description: description,
       completed: false,
     };
-    AddTask(newTask);
+
+    isEditing ? handleEditTask(newTask) && setIsEditing((prev) => !prev) : AddTask(newTask);
+    
     setTitle("");
     setCategory("");
     setDescription("");
@@ -78,104 +74,60 @@ function InputForm() {
   };
 
   const toggleComplete = (index) => {
-    console.log("Button is Successfully Clicked" + index)
+    console.log("Button is Successfully Clicked" + index);
+  };
+
+  const handleEdit = (editTask) => {
+    setTitle(editTask.title);
+    setCategory(editTask.category);
+    setDescription(editTask.description);
+    setIsEditing((prev) => !prev);
+    setEditId(editTask._id);
+  };
+
+  const handleEditTask = async (editableTask) => {
+    try {
+      const response = await fetch(`${URL}${editId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editableTask),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Unable to Edit Task. Status: ${response.status}`);
+      }
+
+      const updatedTask = await response.json();
+      fetchTasks();
+
+      return updatedTask;
+    } catch (error) {
+      console.error("Error editing task:", error);
+      throw error;
+    }
   };
 
   const handleDeleteTask = async (taskId) => {
     const deleteUrl = `${URL}${taskId}`;
-    console.log("Making DELETE request to:", deleteUrl);
 
     try {
       const response = await fetch(deleteUrl, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-
       });
 
-      console.log("Delete response status:", response.status); // Add this log
-
       if (!response.ok) {
-        const errorData = await response.json(); // Get error details
+        const errorData = await response.json();
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message}`);
       }
 
-      const result = await response.json(); // Parse success response
-      console.log("Delete result:", result);
-
+      const result = await response.json();
+      console.log(result)
       setTaskArray(prevTasks => prevTasks.filter(task => task._id !== taskId));
-
     } catch (error) {
       console.error("Unable to Delete Task:", error);
     }
   };
-
-  useGSAP(() => {
-    const tl = gsap.timeline();
-
-    tl.from("#mainTitle", {
-      x: 100,
-      opacity: 0,
-      duration: 1,
-      ease: "sine.out",
-    })
-      .from(
-        "#input",
-        {
-          y: 25,
-          opacity: 0,
-          duration: 1,
-          stagger: 0.1,
-          ease: "sine.out",
-        },
-        "-=85%"
-      )
-      .from(
-        "#All, #Must",
-        {
-          x: -20,
-          y: -10,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.2,
-          ease: "sine.out",
-        },
-        "Category, -=85%"
-      )
-      .from(
-        "#Normal, #Daily",
-        {
-          x: 20,
-          y: -10,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.2,
-          ease: "sine.out",
-        },
-        "Category, -=85%"
-      )
-      .from(
-        "#Namaz",
-        {
-          x: -20,
-          opacity: 0,
-          duration: 0.7,
-          ease: "sine.out",
-        },
-        "Navigation, -=85%"
-      )
-      .from(
-        "#OurStory",
-        {
-          x: 20,
-          opacity: 0,
-          duration: 0.7,
-          ease: "sine.out",
-        },
-        "Navigation, -=85%"
-      );
-
-    return () => tl.kill();
-  }, []);
 
   useEffect(() => {
     fetchTasks();
@@ -201,8 +153,8 @@ function InputForm() {
         />
 
         <div
-          // onClick={()=>setIsOpen((prev) => !prev)}
           id="input"
+          onClick={() => setIsOpen((prev) => !prev)}
           className="relative w-full rounded-lg shadow transition-all duration-200 bg-white"
         >
           <select
@@ -233,8 +185,7 @@ function InputForm() {
 
           <MdArrowDropDown
             size={27}
-            className={`absolute right-4 top-1/2 transform -translate-y-1/2 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-              }`}
+            className={`absolute right-4 top-1/2 transform -translate-y-1/2 transition-all duration-500 ${isOpen ? "rotate-180" : ""}`}
           />
         </div>
 
@@ -246,16 +197,13 @@ function InputForm() {
           placeholder="Task Description"
         />
 
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.3 }}
+        <button
           id="input"
           className="task-title text-white font-bold h-14 bg-red-500 rounded-lg shadow-lg cursor-pointer"
           type="submit"
         >
           {!isEditing ? "Add Task" : "Update Task"}
-        </motion.button>
+        </button>
       </form>
 
       <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-7">
@@ -267,7 +215,12 @@ function InputForm() {
       </div>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-12">
-        <TaskCard taskArray={taskArray} onComplete={toggleComplete} onEdit={""} onDelete={handleDeleteTask} />
+        <TaskCard 
+          taskArray={taskArray} 
+          onComplete={toggleComplete} 
+          onEdit={handleEdit} 
+          onDelete={handleDeleteTask} 
+        />
       </div>
     </div>
   );

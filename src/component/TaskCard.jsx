@@ -49,14 +49,14 @@ function TaskCard({ taskArray, onComplete, onEdit, onDelete }) {
                             <div className="flex flex-col gap-1.5">
                                 {/* Change this line */}
                                 <Buttons
-                                    onEdit={() => onEdit(task._id)}
+                                    onClick={()=>onComplete(task._id)}
                                     name={!task.completed ? "Complete" : "Undo"}
                                     color="bg-gradient-to-br from-green-400 to-green-600"
                                 />
                                 <Buttons
                                     name="Edit"
                                     color="bg-gradient-to-br from-yellow-400 to-yellow-600"
-                                    onClick={()=>onComplete(task._id)}
+                                    onClick={() => onEdit(task)}
                                 />
                                 <Buttons
                                     name="Delete"
