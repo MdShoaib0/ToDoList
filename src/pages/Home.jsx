@@ -1,5 +1,5 @@
 import React from 'react';
-import InputField from '../component/InputField';
+import InputField from '../component/InputForm';
 import Footer from './Footer';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';

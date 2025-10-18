@@ -7,7 +7,7 @@ function Buttons(props) {
     <div>
       <button
         onClick={onClick}
-        className={`w-21 h-8 rounded-lg outline-none border-none shadow shadow-gray-600 text-slate-100 text-sm font-bold cursor-pointer 
+        className={`w-21 h-8 rounded-lg outline-none border-none shadow text-slate-100 text-sm font-bold cursor-pointer 
           ${color} 
           active:scale-97 
           transition-all duration-300`}

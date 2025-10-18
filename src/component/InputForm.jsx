@@ -5,24 +5,19 @@ import gsap from "gsap";
 import { motion } from "motion/react";
 import TaskCard from "./TaskCard";
 import Navigate from "./Navigate";
+import Categorie from "./Categorie";
 
 const URL = "https://to-do-list-backend-rho.vercel.app/task/";
 // const URL = "http://localhost:5000/task/"
 
-function InputField() {
+function InputForm() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
   const [taskArray, setTaskArray] = useState([]);
-
-  const Categories = [
-    { name: "All", color: "bg-emerald-600" },
-    { name: "Normal", color: "bg-orange-600" },
-    { name: "Must", color: "bg-pink-600" },
-    { name: "Daily", color: "bg-purple-600" },
-  ];
+  const [isOpen, setIsOpen] = useState(false);
 
   const fetchTasks = async () => {
     try {
@@ -83,7 +78,7 @@ function InputField() {
   };
 
   const toggleComplete = (index) => {
-    console.log("Button is Successfully Clicked"+index)
+    console.log("Button is Successfully Clicked" + index)
   };
 
   const handleDeleteTask = async (taskId) => {
@@ -192,7 +187,7 @@ function InputField() {
         onSubmit={handleSubmit}
         className="flex flex-col gap-6 w-full md:w-xl"
       >
-        <p id="mainTitle" className="text-xl text-pink-700 font-semibold">
+        <p id="mainTitle" className="text-2xl text-pink-700 font-bold">
           {isEditing ? "Edit Task" : "Create your Task here..."}
         </p>
 
@@ -205,25 +200,41 @@ function InputField() {
           placeholder="Task Title"
         />
 
-        <div id="input" className="relative w-full bg-white rounded-lg shadow">
+        <div
+          // onClick={()=>setIsOpen((prev) => !prev)}
+          id="input"
+          className="relative w-full rounded-lg shadow transition-all duration-200 bg-white"
+        >
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="task-title w-full h-14 px-4 pr-10 outline-none appearance-none bg-transparent"
+            className="task-title w-full h-14 overflow-hidden px-4 pr-10 outline-none appearance-none cursor-pointer rounded-lg"
           >
-            <option value="" disabled>
+            <option
+              className="bg-black text-white font-bold rounded-lg"
+              value=""
+              disabled
+            >
               Categories
             </option>
-            {Categories.map((cat) => (
-              <option key={cat.name} value={cat.name}>
-                {cat.name}
-              </option>
-            ))}
+            <option className="bg-black text-white font-bold" value="All">
+              All
+            </option>
+            <option className="bg-black text-white font-bold" value="Daily">
+              Daily
+            </option>
+            <option className="bg-black text-white font-bold" value="Important">
+              Important
+            </option>
+            <option className="bg-black text-white font-bold" value="Must">
+              Must
+            </option>
           </select>
 
           <MdArrowDropDown
             size={27}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none"
+            className={`absolute right-4 top-1/2 transform -translate-y-1/2 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+              }`}
           />
         </div>
 
@@ -240,7 +251,7 @@ function InputField() {
           whileHover={{ scale: 1.05 }}
           transition={{ duration: 0.3 }}
           id="input"
-          className="task-title text-white font-bold h-14 bg-red-600 rounded-lg shadow-lg cursor-pointer"
+          className="task-title text-white font-bold h-14 bg-red-500 rounded-lg shadow-lg cursor-pointer"
           type="submit"
         >
           {!isEditing ? "Add Task" : "Update Task"}
@@ -248,30 +259,18 @@ function InputField() {
       </form>
 
       <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-7">
-        {Categories.map((cat) => (
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.3 }}
-            key={cat.name}
-            id={cat.name}
-            className={`text-white font-bold h-14 ${cat.color} rounded-lg shadow-lg cursor-pointer`}
-            onClick={() => FilterTask(cat.name)}
-          >
-            {cat.name}
-          </motion.button>
-        ))}
+        <Categorie />
       </div>
 
       <div className="grid grid-cols-2 gap-8">
-        <Navigate name={"Namaz"} navigate={"namaz"}/>
+        <Navigate name={"Namaz"} navigate={"namaz"} />
       </div>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-12">
-        <TaskCard taskArray={taskArray} onComplete={toggleComplete} onEdit={""} onDelete={handleDeleteTask}/>
+        <TaskCard taskArray={taskArray} onComplete={toggleComplete} onEdit={""} onDelete={handleDeleteTask} />
       </div>
     </div>
   );
 }
 
-export default InputField;
+export default InputForm;
