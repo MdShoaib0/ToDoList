@@ -20,6 +20,7 @@ function Navigate() {
                     <Link
                     key={index}
                     className={`text-white w-full text-center font-bold py-4 ${cat.backGround} rounded-lg shadow-lg cursor-pointer active:scale-95 transition-all duration-300`}
+                    to={`/${cat.name}`}
                     >
                     {cat.name}
                     </Link>
