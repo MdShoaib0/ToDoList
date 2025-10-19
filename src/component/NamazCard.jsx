@@ -34,7 +34,7 @@ function NamazCard({ keys, names, gradient }) {
   return (
     <div
       key={keys}
-      className={`relative w-full max-w-md rounded-3xl p-8 bg-gradient-to-br from-white/60 via-emerald-50/80 to-green-100/60 border-2 border-emerald-300/50 shadow-2xl shadow-teal-200 hover:scale-105 transition-all duration-500 cursor-pointer`}
+      className={`relative w-full max-w-md rounded-3xl p-8 bg-gradient-to-br ${gradient} border-2 border-emerald-300/50 shadow-2xl shadow-teal-200 hover:scale-105 transition-all duration-500 cursor-pointer`}
     >
       {/* Edit / Save Button */}
       <div
@@ -103,14 +103,14 @@ function NamazCard({ keys, names, gradient }) {
           className="bg-gradient-to-br from-emerald-500 to-green-600 text-white py-4 rounded-xl flex justify-center items-center gap-2 font-semibold hover:from-emerald-600 hover:to-green-700 active:scale-95 transition-all cursor-pointer shadow-md hover:shadow-lg"
         >
           <BsPlusCircle className="text-white text-lg" />
-          <button>Add Qada</button>
+          <button className="cursor-pointer">Add Qada</button>
         </div>
         <div
           onClick={handleComplete}
           className="bg-gradient-to-br from-rose-500 to-rose-600 text-white py-4 rounded-xl flex justify-center items-center gap-2 font-semibold hover:from-rose-600 hover:to-rose-700 active:scale-95 transition-all cursor-pointer shadow-md hover:shadow-lg"
         >
           <HiOutlineMinusCircle className="text-white text-lg" />
-          <button>Complete</button>
+          <button className="cursor-pointer">Complete</button>
         </div>
       </div>
 
@@ -127,7 +127,7 @@ function NamazCard({ keys, names, gradient }) {
               width:
                 namazCount === 0
                   ? "100%"
-                  : `${Math.max(10, 100 - namazCount * 5)}%`,
+                  : `${Math.max(5, 100 - namazCount * 1)}%`,
             }}
           ></div>
         </div>
