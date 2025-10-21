@@ -18,7 +18,7 @@ function Categorie() {
                     transition={{ duration: 0.3 }}
                     key={cat.name}
                     id={cat.name}
-                    className={`text-white font-bold h-14 ${cat.color} rounded-lg shadow-lg cursor-pointer`}
+                    className={`text-white font-bold h-14 ${cat.color} rounded-lg shadow cursor-pointer`}
                 >
                     {cat.name}
                 </motion.button>
