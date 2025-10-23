@@ -9,83 +9,100 @@ import { MdOutlineDoneAll } from "react-icons/md";
 const BASE_URL = "https://to-do-list-backend-rho.vercel.app/task/";
 
 function NamazCard({ id, name, gradient }) {
-  const [namazCount, setNamazCount] = useState(0);
+  const [allNamazData, setAllNamazData] = useState([]); // Store all data from API
+  const [currentNamaz, setCurrentNamaz] = useState(null); // Store current namaz data
   const [editMode, setEditMode] = useState(false);
   const [inputCount, setInputCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Fetch initial Namaz count
-  const fetchNamaz = async () => {
+  // Find current namaz data from allNamazData
+  useEffect(() => {
+    if (allNamazData.length > 0) {
+      const foundNamaz = allNamazData.find(namaz => namaz.name === name);
+      setCurrentNamaz(foundNamaz || { name, count: 0 });
+      setInputCount(foundNamaz?.count || 0);
+    }
+  }, [allNamazData, name]);
+
+  function handleInputToggle() {
+    if (editMode) {
+      handleUpdateCount();
+    }
+    setEditMode((prev) => !prev);
+  }
+
+  function handleInputChange(event) {
+    const newCount = Math.max(0, Number(event.target.value));
+    setInputCount(newCount);
+  }
+
+  async function handleUpdateCount() {
+    await handleCreateCount(name, inputCount);
+  }
+
+  async function handleIncrementCount() {
+    const newCount = (currentNamaz?.count || 0) + 1;
+    await handleCreateCount(name, newCount);
+  }
+
+  async function handleDecrementCount() {
+    const newCount = Math.max(0, (currentNamaz?.count || 0) - 1);
+    await handleCreateCount(name, newCount);
+  }
+
+  async function handleFetchCount() {
     try {
-      const response = await fetch(`${BASE_URL}${name}`);
+      setLoading(true);
+      const response = await fetch(BASE_URL);
+
       if (response.ok) {
-        const data = await response.json();
-        setNamazCount(data.namazCount ?? 0);
-        console.log(`Fetched ${name} count:`, data.namazCount);
+        const newData = await response.json();
+        setAllNamazData(newData);
       } else {
-        console.log(`Failed to fetch ${name} count from backend.`);
+        console.error("Unable to Load Data");
       }
     } catch (error) {
-      console.error("Fetch Error:", error);
+      console.error("Problem in Fetching:", error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
-  // ✅ Post updated Namaz count
-  const updateNamaz = async (newCount) => {
+  const handleCreateCount = async (name, count) => {
     try {
-      const response = await fetch(`${BASE_URL}${name}`, {
+      const response = await fetch(BASE_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ namazCount: newCount }),
+        body: JSON.stringify({ name, count })
       });
-      if (response.ok) {
-        console.log(`${name} count updated successfully`);
-      } else {
-        console.log(`Failed to update ${name} count`);
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
+      
+      // Refresh data after update
+      await handleFetchCount();
     } catch (error) {
-      console.error("Post Error:", error);
+      console.error("Error creating count:", error);
     }
   };
 
-  // ✅ Initial fetch
+  // Initialize data
   useEffect(() => {
-    fetchNamaz();
+    handleFetchCount();
   }, []);
 
-  // ✅ Auto-sync with backend when namazCount changes
-  useEffect(() => {
-    if (namazCount >= 0) {
-      updateNamaz(namazCount);
-    }
-  }, [namazCount]);
+  // Calculate progress based on current count
+  const currentCount = currentNamaz?.count || 0;
+  const progressWidth = currentCount === 0 ? "100%" : `${Math.max(10, 100 - currentCount * 10)}%`;
 
-  // ✅ Handlers
-  const handleAdd = () => setNamazCount((prev) => prev + 1);
-  const handleComplete = () => setNamazCount((prev) => (prev > 0 ? prev - 1 : 0));
-
-  const handleEditToggle = () => {
-    if (editMode) {
-      const newCount = Number(inputCount);
-      setNamazCount(newCount >= 0 ? newCount : 0);
-      setEditMode(false);
-    } else {
-      setInputCount(namazCount);
-      setEditMode(true);
-    }
-  };
-
-  const handleInputChange = (e) => setInputCount(e.target.value);
-
-  // ✅ Dynamic text color
-  const getCountColor = () => {
-    if (namazCount === 0) return "text-emerald-600";
-    if (namazCount <= 5) return "text-amber-500";
-    return "text-rose-600";
-  };
-
-  // ✅ Progress width logic
-  const progressWidth =
-    namazCount === 0 ? "100%" : `${Math.max(0, 100 - namazCount * 10)}%`;
+  if (loading && !currentNamaz) {
+    return (
+      <div className={`relative w-full max-w-md rounded-3xl p-8 bg-gradient-to-br ${gradient} border-2 border-emerald-300/50 animate-pulse`}>
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -94,7 +111,7 @@ function NamazCard({ id, name, gradient }) {
     >
       {/* 🔧 Edit / Save Button */}
       <div
-        onClick={handleEditToggle}
+        onClick={handleInputToggle}
         className="absolute top-6 right-6 cursor-pointer"
       >
         {!editMode ? (
@@ -133,19 +150,15 @@ function NamazCard({ id, name, gradient }) {
       <div className="bg-white/70 p-6 rounded-2xl shadow-inner border border-gray-200 text-center mb-6">
         <p className="text-lg font-semibold text-gray-700 mb-2">Remaining Qada</p>
         <div className="flex items-center justify-center gap-3">
-          <span
-            className={`text-5xl font-extrabold ${getCountColor()} transition-all`}
-          >
-            {namazCount}
+          <span className="text-5xl font-extrabold text-rose-700 transition-all">
+            {currentCount}
           </span>
           <MdOutlineDoneAll
-            className={`text-3xl ${
-              namazCount === 0 ? "text-emerald-500" : "text-gray-400"
-            }`}
+            className={`text-3xl ${currentCount === 0 ? "text-emerald-500" : "text-gray-400"}`}
           />
         </div>
         <p className="text-sm text-gray-500 mt-2">
-          {namazCount === 0
+          {currentCount === 0
             ? "All prayers completed! 🌙"
             : "Keep going, Allah loves consistency 💫"}
         </p>
@@ -154,15 +167,16 @@ function NamazCard({ id, name, gradient }) {
       {/* ➕ / ➖ Buttons */}
       <div className="grid grid-cols-2 gap-6">
         <button
-          onClick={handleAdd}
-          className="bg-gradient-to-br from-emerald-500 to-green-600 text-white py-4 rounded-xl flex justify-center items-center gap-2 font-semibold hover:from-emerald-600 hover:to-green-700 active:scale-95 transition-all shadow-md hover:shadow-lg"
+          onClick={handleIncrementCount}
+          className="bg-gradient-to-br from-emerald-400 to-green-600 text-white py-4 rounded-xl flex justify-center items-center gap-2 font-semibold hover:from-emerald-600 hover:to-green-700 active:scale-95 transition-all shadow-md hover:shadow-lg"
         >
           <BsPlusCircle className="text-white text-lg" />
           Add Qada
         </button>
         <button
-          onClick={handleComplete}
-          className="bg-gradient-to-br from-rose-500 to-rose-600 text-white py-4 rounded-xl flex justify-center items-center gap-2 font-semibold hover:from-rose-600 hover:to-rose-700 active:scale-95 transition-all shadow-md hover:shadow-lg"
+          onClick={handleDecrementCount}
+          disabled={currentCount === 0}
+          className="bg-gradient-to-br from-rose-400 to-rose-600 text-white py-4 rounded-xl flex justify-center items-center gap-2 font-semibold hover:from-rose-600 hover:to-rose-700 active:scale-95 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <HiOutlineMinusCircle className="text-white text-lg" />
           Complete
@@ -173,7 +187,7 @@ function NamazCard({ id, name, gradient }) {
       <div className="mt-6">
         <div className="flex justify-between text-sm text-gray-600 mb-2">
           <span>Progress</span>
-          <span>{namazCount === 0 ? "Complete" : "In Progress"}</span>
+          <span>{currentCount === 0 ? "Complete" : "In Progress"}</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
           <div
