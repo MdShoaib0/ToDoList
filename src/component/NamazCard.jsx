@@ -6,16 +6,15 @@ import { FaRegSave } from "react-icons/fa";
 import { MdOutlineDoneAll } from "react-icons/md";
 
 // const BASE_URL = "http://localhost:5000/namaz/";
-const BASE_URL = "https://to-do-list-backend-rho.vercel.app/task/";
+const BASE_URL = "https://to-do-list-backend-rho.vercel.app/namaz/";
 
 function NamazCard({ id, name, gradient }) {
-  const [allNamazData, setAllNamazData] = useState([]); // Store all data from API
-  const [currentNamaz, setCurrentNamaz] = useState(null); // Store current namaz data
+  const [allNamazData, setAllNamazData] = useState([]);
+  const [currentNamaz, setCurrentNamaz] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [inputCount, setInputCount] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  // Find current namaz data from allNamazData
   useEffect(() => {
     if (allNamazData.length > 0) {
       const foundNamaz = allNamazData.find(namaz => namaz.name === name);
@@ -80,19 +79,16 @@ function NamazCard({ id, name, gradient }) {
         throw new Error("Network response was not ok");
       }
       
-      // Refresh data after update
       await handleFetchCount();
     } catch (error) {
       console.error("Error creating count:", error);
     }
   };
 
-  // Initialize data
   useEffect(() => {
     handleFetchCount();
   }, []);
 
-  // Calculate progress based on current count
   const currentCount = currentNamaz?.count || 0;
   const progressWidth = currentCount === 0 ? "100%" : `${Math.max(10, 100 - currentCount * 10)}%`;
 
