@@ -1,19 +1,5 @@
-import React from 'react'
-import Buttons from './Buttons';
-
- const TaskColor = [
-    { start: "from-emerald-200", end: "to-emerald-400" },
-    { start: "from-pink-200", end: "to-pink-400" },
-    { start: "from-sky-200", end: "to-sky-400" },
-    { start: "from-orange-200", end: "to-orange-400" },
-  ];
-
-  const TaskColor1 = [
-    { start: "from-emerald-100", end: "to-emerald-200" },
-    { start: "from-pink-100", end: "to-pink-200" },
-    { start: "from-sky-100", end: "to-sky-200" },
-    { start: "from-orange-100", end: "to-orange-200" },
-  ];
+import React from "react";
+import Buttons from "./Buttons";
 
 function TaskCard({ taskArray, onComplete, onEdit, onDelete }) {
     return (
@@ -22,61 +8,103 @@ function TaskCard({ taskArray, onComplete, onEdit, onDelete }) {
                 taskArray.map((task, index) => (
                     <div
                         key={task._id}
-                        className={`bg-gradient-to-r ${task.completed
-                            ? `${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
-                            : `${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
-                            } flex flex-col gap-2 rounded-3xl shadow-2xl p-6`}
+                        className={`               group relative
+              backdrop-blur-2xl bg-white/5
+              border border-white/10
+              rounded-2xl p-6
+              shadow-xl shadow-black/30
+              hover:shadow-2xl hover:shadow-black/40
+              hover:-translate-y-2
+              transition-all duration-300
+              flex flex-col justify-between
+            `}
                     >
-                        <div className="flex justify-between">
+                        {/* Top Section */} <div className="flex justify-between items-start gap-4">
+
                             <div className="flex flex-col gap-3">
-                                <div className="flex items-center gap-2">
-                                    <p className="w-9 h-9 cursor-pointer active:scale-95 transition-all duration-200 flex justify-center items-center text-2xl font-bold rounded-full shadow bg-gradient-to-br from-blue-300 to-blue-600 text-white">
+
+                                {/* Index + Title */}
+                                <div className="flex items-center gap-3">
+                                    <div className="
+                w-9 h-9 flex items-center justify-center
+                rounded-full text-sm font-bold
+                bg-gradient-to-br from-pink-500 to-purple-500
+                text-white shadow-lg
+              ">
                                         {index + 1}
-                                    </p>
-                                    <p
-                                        className={`text-2xl font-bold text-emerald-950 ${task.completed ? "line-through" : ""
+                                    </div>
+
+                                    <h2
+                                        className={`text-lg font-semibold text-white ${task.completed ? "line-through opacity-50" : ""
                                             }`}
                                     >
                                         {task.title}
-                                    </p>
+                                    </h2>
                                 </div>
-                                <p className="w-fit text-sm font-bold bg-gradient-to-br from-pink-400 to-pink-600 px-3.5 py-1 rounded-full text-white shadow">
+
+                                {/* Category Badge */}
+                                <span className="
+              w-fit px-3 py-1 text-xs font-medium
+              rounded-full
+              bg-white/10 border border-white/20
+              text-gray-300
+            ">
                                     {task.category}
+                                </span>
+
+                                {/* Date */}
+                                <p className="text-xs text-gray-400">
+                                    {task.date}
                                 </p>
-                                <p className="text-sm font-medium text-gray-600">{task.date}</p>
                             </div>
 
-                            <div className="flex flex-col gap-1.5">
-                                {/* Change this line */}
+                            {/* Action Buttons */}
+                            <div className="flex flex-col gap-2">
                                 <Buttons
-                                    onClick={()=>onComplete(task._id)}
+                                    onClick={() => onComplete(task._id)}
                                     name={!task.completed ? "Complete" : "Undo"}
-                                    color="bg-gradient-to-br from-green-400 to-green-600"
                                 />
                                 <Buttons
                                     name="Edit"
-                                    color="bg-gradient-to-br from-yellow-400 to-yellow-600"
                                     onClick={() => onEdit(task)}
                                 />
                                 <Buttons
                                     name="Delete"
-                                    color="bg-gradient-to-br from-red-400 to-red-600"
-                                    onClick={()=>onDelete(task._id)}
+                                    onClick={() => onDelete(task._id)}
                                 />
                             </div>
                         </div>
-                        <p className="text-slate-700 font-medium whitespace-pre-line">
+
+                        {/* Description */}
+                        <p className="mt-4 text-sm text-gray-300 leading-relaxed whitespace-pre-line">
                             {task.description}
                         </p>
+
+                        {/* Glow Effect Border */}
+                        <div className="
+          absolute inset-0 rounded-2xl
+          opacity-0 group-hover:opacity-100
+          bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-indigo-500/20
+          blur-xl transition duration-500
+          -z-10
+        "></div>
+
                     </div>
                 ))
             ) : (
-                <p className="text-center text-gray-700 col-span-full">
+                <div className="
+      col-span-full text-center
+      backdrop-blur-xl bg-white/5
+      border border-white/10
+      rounded-2xl p-10
+      text-gray-400
+    ">
                     No tasks available
-                </p>
+                </div>
             )}
         </>
-    )
+
+    );
 }
 
 export default TaskCard;

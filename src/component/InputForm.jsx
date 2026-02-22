@@ -103,72 +103,62 @@ function InputForm() {
   useEffect(() => { fetchTasks(); }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6 md:p-10">
-      <div className="max-w-6xl mx-auto space-y-12">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#020617] text-white">
+      <div className="max-w-7xl mx-auto px-4 py-10 space-y-10">
 
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-pink-500 to-red-500 bg-clip-text text-transparent">
-            Smart Task Manager
-          </h1>
-          <p className="text-gray-500">Organize your day efficiently</p>
+        {/* Top Header */}
+        <div className="flex items-center justify-between backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl p-5 shadow-2xl">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">TaskFlow</h1>
+            <p className="text-sm text-gray-300">Your productivity companion</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-gray-400">Total Tasks</p>
+            <p className="text-2xl font-bold">{taskArray.length}</p>
+          </div>
         </div>
 
-        {/* Form Card */}
+        {/* Form Section */}
         <form onSubmit={handleSubmit}
-          className="bg-white/70 backdrop-blur-xl border border-gray-200 shadow-xl rounded-2xl p-6 md:p-8 space-y-6">
+          className="grid lg:grid-cols-3 gap-6 backdrop-blur-2xl bg-white/5 border border-white/10 rounded-2xl p-6 shadow-xl">
 
-          <h2 className="text-xl font-semibold text-gray-700">
-            {isEditing ? "Update Task" : "Create New Task"}
-          </h2>
+          <div className="space-y-4 lg:col-span-1">
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              type="text"
+              placeholder="Task title..."
+              className="w-full h-12 px-4 rounded-xl bg-white/10 border border-white/20 focus:border-pink-400 outline-none"
+            />
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-600">Task Title</label>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                type="text"
-                placeholder="Enter title..."
-                className="w-full px-4 h-12 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-400 outline-none transition"
-              />
+            <div className="relative">
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full h-12 px-4 rounded-xl bg-white/10 border border-white/20 appearance-none outline-none"
+              >
+                <option value="" disabled>Choose category</option>
+                <option value="All">All</option>
+                <option value="Daily">Daily</option>
+                <option value="Important">Important</option>
+                <option value="Must">Must</option>
+              </select>
+              <MdArrowDropDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300" />
             </div>
 
-            <div className="space-y-2 relative">
-              <label className="text-sm font-medium text-gray-600">Category</label>
-              <div className="relative">
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-4 h-12 rounded-xl border border-gray-200 appearance-none focus:ring-2 focus:ring-pink-400 outline-none bg-white"
-                >
-                  <option value="" disabled>Choose category</option>
-                  <option value="All">All</option>
-                  <option value="Daily">Daily</option>
-                  <option value="Important">Important</option>
-                  <option value="Must">Must</option>
-                </select>
-                <MdArrowDropDown className={`absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 transition ${isOpen ? "rotate-180" : ""}`} />
-              </div>
-            </div>
+            <button type="submit" className="w-full h-12 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 font-semibold hover:scale-105 active:scale-95 transition">
+              {isEditing ? "Update Task" : "Add Task"}
+            </button>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-600">Description</label>
+          <div className="lg:col-span-2">
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Write task details..."
-              className="w-full p-4 h-32 rounded-xl border border-gray-200 focus:ring-2 focus:ring-pink-400 outline-none resize-none"
+              placeholder="Write detailed description..."
+              className="w-full h-full min-h-[120px] p-4 rounded-xl bg-white/10 border border-white/20 outline-none resize-none"
             />
           </div>
-
-          <button
-            type="submit"
-            className="w-full h-12 rounded-xl font-semibold text-white bg-gradient-to-r from-pink-500 to-red-500 hover:scale-[1.02] active:scale-95 transition shadow-lg"
-          >
-            {isEditing ? "Update Task" : "Add Task"}
-          </button>
         </form>
 
         {/* Categories */}
@@ -176,12 +166,12 @@ function InputForm() {
           <Categorie />
         </div>
 
-        {/* Navigation */}
+        {/* Navigate */}
         <div className="grid grid-cols-2 gap-6">
           <Navigate name={"Namaz"} navigate={"namaz"} />
         </div>
 
-        {/* Tasks */}
+        {/* Task List */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           <TaskCard
             taskArray={taskArray}
@@ -190,6 +180,7 @@ function InputForm() {
             onDelete={handleDeleteTask}
           />
         </div>
+
       </div>
     </div>
   );
