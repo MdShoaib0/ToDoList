@@ -15,7 +15,7 @@ function ManageNamaz() {
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-emerald-700 to-teal-800 bg-clip-text text-transparent tracking-tight">
             Namaz Tracker
           </h1>
-          <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full flex items-center justify-center shadow-lg">
             <FaStarAndCrescent className="text-white text-xl" />
           </div>
         </div>

@@ -25,7 +25,7 @@ function TaskCard({ taskArray, onComplete, onEdit, onDelete }) {
                         className={`bg-gradient-to-r ${task.completed
                             ? `${TaskColor1[index % TaskColor1.length].start} ${TaskColor1[index % TaskColor1.length].end}`
                             : `${TaskColor[index % TaskColor.length].start} ${TaskColor[index % TaskColor.length].end}`
-                            } flex flex-col gap-2 rounded-2xl shadow-2xl p-6`}
+                            } flex flex-col gap-2 rounded-3xl shadow-2xl p-6`}
                     >
                         <div className="flex justify-between">
                             <div className="flex flex-col gap-3">
