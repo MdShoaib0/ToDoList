@@ -3,8 +3,7 @@ import NamazCard from "../components/NamazCard";
 import { FaMosque, FaPray, FaStarAndCrescent } from "react-icons/fa";
 
 function ManageNamaz() {
-return ( <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#0f172a] to-[#020617] text-white p-6">
-
+return ( <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#0f172a] to-[#020617] text-white px-6 py-12">
 
   {/* Header */}
   <div className="text-center mb-16">
@@ -30,9 +29,9 @@ return ( <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#0f1
     <NamazCard name="Isha" />
   </div>
 
-  {/* Inspiration Section */}
-  <div className="max-w-4xl mx-auto text-center">
-    <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-2xl p-10 shadow-xl">
+  {/* Wisdom Card */}
+  <div className="max-w-4xl mx-auto">
+    <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-2xl p-10 shadow-xl text-center">
 
       <div className="flex justify-center items-center gap-3 mb-6">
         <FaPray className="text-emerald-400 text-2xl" />
@@ -55,13 +54,13 @@ return ( <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#0f1
     </div>
   </div>
 
-  {/* Floating Button */}
+  {/* Floating Action Button */}
   <div className="fixed bottom-8 right-8">
     <button className="
-      flex items-center gap-2 px-5 py-3 rounded-full
-      bg-gradient-to-r from-emerald-500 to-teal-500
+      flex items-center gap-2 px-6 py-3 rounded-full
+      bg-emerald-500 hover:bg-emerald-600
       shadow-lg shadow-emerald-500/30
-      hover:scale-110 transition
+      transition hover:scale-110
     ">
       <FaMosque />
       Track
@@ -69,7 +68,6 @@ return ( <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#0f1
   </div>
 
 </div>
-
 
 );
 }

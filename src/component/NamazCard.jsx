@@ -58,7 +58,7 @@ function NamazCard({ name }) {
     return (
 
         <div className="
-  relative rounded-2xl p-6
+  rounded-2xl p-6
   bg-slate-900/60 backdrop-blur-2xl
   border border-white/10
   shadow-xl shadow-black/40
@@ -90,7 +90,6 @@ function NamazCard({ name }) {
                         className={`text-2xl ${currentCount === 0 ? "text-emerald-400" : "text-gray-600"}`}
                     />
                 </div>
-                
 
             </div>
 
@@ -98,7 +97,6 @@ function NamazCard({ name }) {
 
             <div className="grid grid-cols-2 gap-4">
 
-                
                 <button
                     onClick={() => handleCreateCount(name, currentCount + 1)}
                     className="
