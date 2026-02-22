@@ -1,17 +1,16 @@
-import { Routes, Route } from 'react-router';
-import './App.css';
-import Home from './pages/Home';
-import ManageNamaz from './pages/ManageNamaz';
-import Tasbih from './pages/Tasbih';
+import { BrowserRouter, Routes, Route } from "react-router";
+import Home from "./pages/Home";
+import Namaz from "./pages/Namaz";
+import Tasbih from "./pages/Tasbih";
 
-function App() {
+export default function App() {
   return (
+    <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/Namaz' element={<ManageNamaz />} />
-        <Route path='/Tasbih' element={<Tasbih />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/Namaz" element={<Namaz />} />
+        <Route path="/Tasbih" element={<Tasbih />} />
       </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
