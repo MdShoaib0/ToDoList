@@ -15,7 +15,7 @@ function Navigate() {
                 className={`             group relative text-center
             backdrop-blur-2xl bg-white/5
             border ${cat.glow}
-            rounded-2xl py-6
+            rounded-2xl py-3
             font-semibold text-white tracking-wide
             shadow-xl shadow-black/25
             hover:-translate-y-2 hover:shadow-2xl
@@ -27,7 +27,7 @@ function Navigate() {
 
                 {/* Hover Glow */}
                 <div className={`
-        absolute inset-0 opacity-0 group-hover:opacity-100
+        absolute inset-0 opacity-100 group-hover:opacity-10
         bg-gradient-to-r ${cat.glow}
         blur-xl transition duration-500
       `}></div>

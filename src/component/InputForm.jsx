@@ -9,144 +9,144 @@ const URL = "https://to-do-list-backend-rho.vercel.app/task/";
 
 function InputForm() {
 
-// cached tasks
-const [taskArray, setTaskArray] = useState(() => {
-const saved = localStorage.getItem("tasks");
-return saved ? JSON.parse(saved) : [];
-});
-
-const [title, setTitle] = useState("");
-const [category, setCategory] = useState("");
-const [description, setDescription] = useState("");
-const [isEditing, setIsEditing] = useState(false);
-const [editId, setEditId] = useState(null);
-const [isOpen, setIsOpen] = useState(false);
-
-// fetch tasks
-const fetchTasks = async () => {
-try {
-const response = await fetch(URL);
-const data = await response.json();
-const tasksArray = Array.isArray(data) ? data : [data];
-
-
-  setTaskArray(tasksArray);
-  localStorage.setItem("tasks", JSON.stringify(tasksArray));
-} catch {
-  console.log("offline → cached tasks");
-}
-
-
-};
-
-// add task
-const AddTask = async (newTask) => {
-const payload = { ...newTask, updatedAt: Date.now() };
-
-
-try {
-  await fetch(URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+  // cached tasks
+  const [taskArray, setTaskArray] = useState(() => {
+    const saved = localStorage.getItem("tasks");
+    return saved ? JSON.parse(saved) : [];
   });
-  fetchTasks();
 
-} catch {
-  addToQueue({
-    url: URL,
-    options: {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // fetch tasks
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch(URL);
+      const data = await response.json();
+      const tasksArray = Array.isArray(data) ? data : [data];
+
+
+      setTaskArray(tasksArray);
+      localStorage.setItem("tasks", JSON.stringify(tasksArray));
+    } catch {
+      console.log("offline → cached tasks");
     }
-  });
-
-  setTaskArray(prev => {
-    const updated = [...prev, payload];
-    localStorage.setItem("tasks", JSON.stringify(updated));
-    return updated;
-  });
-}
 
 
-};
+  };
 
-const handleSubmit = (e) => {
-e.preventDefault();
-const newTask = { title, category, date: new Date().toLocaleString(), description, completed: false };
-
-isEditing ? handleEditTask(newTask) : AddTask(newTask);
-
-setTitle("");
-setCategory("");
-setDescription("");
-setIsEditing(false);
+  // add task
+  const AddTask = async (newTask) => {
+    const payload = { ...newTask, updatedAt: Date.now() };
 
 
-};
+    try {
+      await fetch(URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      fetchTasks();
 
-const handleEdit = (task) => {
-setTitle(task.title);
-setCategory(task.category);
-setDescription(task.description);
-setEditId(task._id);
-setIsEditing(true);
-};
+    } catch {
+      addToQueue({
+        url: URL,
+        options: {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }
+      });
 
-const handleEditTask = async (editableTask) => {
-const payload = { ...editableTask, updatedAt: Date.now() };
-
-
-try {
-  await fetch(`${URL}${editId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  fetchTasks();
-
-} catch {
-  addToQueue({
-    url: `${URL}${editId}`,
-    options: {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      setTaskArray(prev => {
+        const updated = [...prev, payload];
+        localStorage.setItem("tasks", JSON.stringify(updated));
+        return updated;
+      });
     }
-  });
-}
-
-};
-
-const handleDeleteTask = async (id) => {
-try {
-await fetch(`${URL}${id}`, { method: "DELETE" });
 
 
-  setTaskArray(prev => {
-    const updated = prev.filter(t => t._id !== id);
-    localStorage.setItem("tasks", JSON.stringify(updated));
-    return updated;
-  });
+  };
 
-} catch {
-  addToQueue({ url: `${URL}${id}`, options: { method: "DELETE" } });
-}
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newTask = { title, category, date: new Date().toLocaleString(), description, completed: false };
+
+    isEditing ? handleEditTask(newTask) : AddTask(newTask);
+
+    setTitle("");
+    setCategory("");
+    setDescription("");
+    setIsEditing(false);
 
 
-};
+  };
 
-// background sync
-useEffect(() => {
-navigator.serviceWorker?.addEventListener("message", (event) => {
-if (event.data.type === "SYNC_NOW") processQueue();
-});
-}, []);
+  const handleEdit = (task) => {
+    setTitle(task.title);
+    setCategory(task.category);
+    setDescription(task.description);
+    setEditId(task._id);
+    setIsEditing(true);
+  };
 
-useEffect(() => { fetchTasks(); }, []);
+  const handleEditTask = async (editableTask) => {
+    const payload = { ...editableTask, updatedAt: Date.now() };
 
-return ( <div className="min-h-screen text-white p-6"> <div className="max-w-6xl mx-auto space-y-12">
+
+    try {
+      await fetch(`${URL}${editId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      fetchTasks();
+
+    } catch {
+      addToQueue({
+        url: `${URL}${editId}`,
+        options: {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }
+      });
+    }
+
+  };
+
+  const handleDeleteTask = async (id) => {
+    try {
+      await fetch(`${URL}${id}`, { method: "DELETE" });
+
+
+      setTaskArray(prev => {
+        const updated = prev.filter(t => t._id !== id);
+        localStorage.setItem("tasks", JSON.stringify(updated));
+        return updated;
+      });
+
+    } catch {
+      addToQueue({ url: `${URL}${id}`, options: { method: "DELETE" } });
+    }
+
+
+  };
+
+  // background sync
+  useEffect(() => {
+    navigator.serviceWorker?.addEventListener("message", (event) => {
+      if (event.data.type === "SYNC_NOW") processQueue();
+    });
+  }, []);
+
+  useEffect(() => { fetchTasks(); }, []);
+
+  return (<div className="min-h-screen text-white p-6"> <div className="max-w-6xl mx-auto space-y-12">
 
 
     {/* Form Card */}
@@ -217,15 +217,15 @@ return ( <div className="min-h-screen text-white p-6"> <div className="max-w-6xl
         taskArray={taskArray}
         onEdit={handleEdit}
         onDelete={handleDeleteTask}
-        onComplete={() => {}}
+        onComplete={() => { }}
       />
     </div>
 
   </div>
-</div>
+  </div>
 
 
-);
+  );
 }
 
 export default InputForm;

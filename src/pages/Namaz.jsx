@@ -1,5 +1,5 @@
 import React from "react";
-import NamazCard from "../components/NamazCard";
+import NamazCard from "../component/NamazCard";
 import { FaMosque, FaPray, FaStarAndCrescent } from "react-icons/fa";
 
 function ManageNamaz() {
